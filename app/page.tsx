@@ -1,5 +1,6 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -17,13 +18,13 @@ export default function Home() {
         </p>
 
         <div className="mt-8 flex gap-4">
-          <button className="rounded-lg bg-white px-6 py-3 text-black font-semibold hover:bg-gray-200 transition">
+          <Button size="lg">
             Get Started
-          </button>
+          </Button>
 
-          <button className="rounded-lg border border-gray-700 px-6 py-3 hover:bg-gray-900 transition">
+          <Button variant="outline" size="lg">
             Learn More
-          </button>
+          </Button>
         </div>
       </section>
 
