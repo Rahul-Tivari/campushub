@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String                 @id @default(cuid())
+  name          String?
+  email         String                 @unique
+  skills        String?
+  githubUrl     String?
+  linkedinUrl   String?
+  password      String
+  role          Role                   @default(STUDENT)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  notifications Notification[]
+  projects      Project[]
+  memberships   ProjectMember[]
+  requests      CollaborationRequest[]
+  discussions   Discussion[]
+  uploadedFiles ProjectFile[]
+  bio           String?
+  avatarUrl     String?
+  stars         ProjectStar[]
+  notes         Note[]
+  ownedTeams    Team[]
+
+  teamMemberships TeamMember[]
+  teamRequests    TeamRequest[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  techStack   String
+  githubUrl   String?
+  createdAt   DateTime @default(now())
+
+  authorId    String
+  author      User                   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  members     ProjectMember[]
+  requests    CollaborationRequest[]
+  discussions Discussion[]
+  files       ProjectFile[]
+  stars       ProjectStar[]
+}
+
+model ProjectMember {
+  id String @id @default(cuid())
+
+  userId    String
+  projectId String
+
+  role String @default("MEMBER")
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model CollaborationRequest {
+  id String @id @default(cuid())
+
+  userId    String
+  projectId String
+
+  status String @default("PENDING")
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model Discussion {
+  id String @id @default(cuid())
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  userId    String
+  projectId String
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+}
+
+model ProjectFile {
+  id String @id @default(cuid())
+
+  name String
+  url  String
+  type String
+
+  createdAt DateTime @default(now())
+
+  uploaderId String
+  projectId  String
+
+  uploader User @relation(fields: [uploaderId], references: [id])
+
+  project Project @relation(fields: [projectId], references: [id])
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  isRead Boolean @default(false)
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProjectStar {
+  id String @id @default(cuid())
+
+  userId    String
+  projectId String
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model Note {
+  id String @id @default(cuid())
+
+  title String
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Team {
+  id String @id @default(cuid())
+
+  name        String
+  description String
+
+  createdAt DateTime @default(now())
+
+  ownerId String
+
+  owner    User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  requests TeamRequest[]
+  members  TeamMember[]
+}
+
+model TeamMember {
+  id String @id @default(cuid())
+
+  role String @default("MEMBER")
+
+  joinedAt DateTime @default(now())
+
+  userId String
+  teamId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+model TeamRequest {
+  id String @id @default(cuid())
+
+  status String @default("PENDING")
+
+  createdAt DateTime @default(now())
+
+  userId String
+  teamId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+enum Role {
+  STUDENT
+  FACULTY
+  ADMIN
+}

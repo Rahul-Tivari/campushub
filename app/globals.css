@@ -127,4 +127,25 @@
   html {
     @apply font-sans;
   }
+body {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(120, 119, 198, 0.15),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(255, 0, 128, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom,
+      rgba(0, 200, 255, 0.12),
+      transparent 30%
+    ),
+    #050505;
+
+  min-height: 100vh;
+}
 }
