@@ -27,19 +27,21 @@ export default function AppShell({
   }
 
   return (
-    <div>
+  <div>
+    <div className="hidden md:block">
       <Sidebar />
-
-      <main className="ml-64 min-h-screen">
-        <div className="flex justify-end border-b border-white/10 p-4">
-          <div className="flex items-center gap-6">
-            <NotificationBell />
-            <LogoutButton />
-          </div>
-        </div>
-
-        {children}
-      </main>
     </div>
-  );
+
+    <main className="min-h-screen md:ml-64">
+      <div className="flex justify-end border-b border-white/10 p-4">
+        <div className="flex items-center gap-6">
+          <NotificationBell />
+          <LogoutButton />
+        </div>
+      </div>
+
+      {children}
+    </main>
+  </div>
+);
 }
